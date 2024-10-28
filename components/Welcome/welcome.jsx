@@ -54,7 +54,7 @@ return(
        <div className="flex justify-center gap-4 pt-20">          
       <div className="w-32 h-48 overflow-hidden rounded-full">
         <HoverCard>
-        <HoverCardTrigger Hover>
+        <HoverCardTrigger >
           <img src="paris.jpg" alt="Oval" className="object-cover w-full h-full" />
         
         </HoverCardTrigger>
@@ -63,7 +63,7 @@ return(
       </div>
       <div className="w-32 h-48 overflow-hidden rounded-full">
         <HoverCard>
-        <HoverCardTrigger Hover>
+        <HoverCardTrigger>
           <img src="Japan1.jpg" alt="Oval" className="object-cover w-full h-full" />
         </HoverCardTrigger>
         <HoverCardContent className="w-24 gap-6">Tokyo</HoverCardContent>
@@ -71,7 +71,7 @@ return(
       </div>
       <div className="w-32 h-48 overflow-hidden rounded-full">
       <HoverCard>
-      <HoverCardTrigger Hover>
+      <HoverCardTrigger>
         <img src="abuDhabi.jpg" alt="Oval" className="object-cover w-full h-full" />
         </HoverCardTrigger>
         <HoverCardContent className="w-24 gap-6">Abu Dhabi</HoverCardContent>
@@ -79,7 +79,7 @@ return(
       </div>
       <div className="w-32 h-48 overflow-hidden rounded-full">
       <HoverCard>
-      <HoverCardTrigger Hover>
+      <HoverCardTrigger>
         <img src="greece.jpg" alt="Oval" className="object-cover w-full h-full" />
         </HoverCardTrigger>
         <HoverCardContent className="w-24 gap-6">Mykonos</HoverCardContent>
