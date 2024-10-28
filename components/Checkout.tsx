@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dialog"
 
 export default function AirlineCheckout() {
+  console.log("Component is rendering!");
   const [isLoading, setIsLoading] = useState(false)
   const [showConfirmation, setShowConfirmation] = useState(false)
 
@@ -30,6 +31,7 @@ export default function AirlineCheckout() {
   }
 
   return (
+    
     <div className="container mx-auto p-4 max-w-4xl">
       <h1 className="text-3xl font-bold mb-8">Checkout</h1>
       <div className="grid gap-8 md:grid-cols-2">
