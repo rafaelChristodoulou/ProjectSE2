@@ -1,4 +1,4 @@
-import Header from '../components/Navbar/navbar'
+import AirlineCheckout from "@/components/Checkout"
 import Welcome from '@/components/Welcome/welcome'
 
 export default function Home() {
@@ -6,9 +6,9 @@ export default function Home() {
 
   return (
     <>
-      <Header />
-      <Welcome />
-      <button onClick={logout}>Logout</button>
+   
+      <AirlineCheckout/>
+      
     </>
   )
 }
