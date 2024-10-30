@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import ContactUs from '@/components/ContactUs'
-import Header from '@/components/Navbar/navbar'
+import Navigation from '@/components/Navbar/navbar'; 
+
 
 export const metadata: Metadata = {
   title: 'Contact Us | SkyWings Airlines',
@@ -10,7 +11,7 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <main>
-      <Header/>
+      <Navigation/>
       <ContactUs />
     </main>
   )
