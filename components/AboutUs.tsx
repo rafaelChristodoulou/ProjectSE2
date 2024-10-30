@@ -28,7 +28,7 @@ const AboutUs: React.FC = () => {
     },
     {
       title: "Customer Excellence",
-      description: "We're committed to providing exceptional service and comfort to every passenger on every flight."
+      description: "We are committed to providing exceptional service and comfort to every passenger on every flight."
     },
     {
       title: "Innovation",
@@ -98,10 +98,10 @@ const AboutUs: React.FC = () => {
           <h2 className="text-3xl font-bold text-center mb-12">Our Journey</h2>
           <div className="prose max-w-3xl mx-auto text-gray-600">
             <p className="mb-6">
-              Founded in 1998, AMS Airlines began with just three aircraft serving five domestic routes. Today, we've grown into one of the region's leading carriers, connecting millions of passengers to destinations worldwide.
+              Founded in 1998, AMS Airlines began with just three aircraft serving five domestic routes. Today, we&apos;ve grown into one of the region&apos;s leading carriers, connecting millions of passengers to destinations worldwide.
             </p>
             <p className="mb-6">
-              Our commitment to innovation has driven us to maintain one of the youngest and most efficient fleets in the industry. We've consistently invested in the latest technology and sustainable practices to reduce our environmental impact.
+              Our commitment to innovation has driven us to maintain one of the youngest and most efficient fleets in the industry. We&apos;ve consistently invested in the latest technology and sustainable practices to reduce our environmental impact.
             </p>
             <p>
               As we look to the future, we remain dedicated to our founding principles of safety, service, and sustainability while embracing new technologies and opportunities to better serve our passengers.

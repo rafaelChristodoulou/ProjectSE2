@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import AboutUs from '@/components/AboutUs'
-import Header from '@/components/Navbar/navbar'
+import Navigation from '@/components/Navbar/navbar'; 
 
 export const metadata: Metadata = {
   title: 'About Us | AMS Airlines',
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <main>
-      <Header/>
+      <Navigation/>
       <AboutUs />
     </main>
   )

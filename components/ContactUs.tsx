@@ -80,7 +80,7 @@ const ContactUs: React.FC = () => {
           <div className="pt-8"> {/* Added padding top for better spacing */}
             <h1 className="text-4xl font-bold mb-4">Contact Us</h1>
             <p className="text-xl opacity-90">
-              We're here to help. Get in touch with us and we'll respond as soon as possible.
+              We are here to help. Get in touch with us and we will respond as soon as possible.
             </p>
           </div>
         </div>
