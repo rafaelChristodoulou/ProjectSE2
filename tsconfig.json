@@ -33,7 +33,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
-, "app/api/db.js"  ],
+, "app/api/db.js", "components/SearchForm.jsx"  ],
   "exclude": [
     "node_modules"
   ]

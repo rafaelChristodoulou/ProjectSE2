@@ -1,15 +1,11 @@
 import Header from '../components/Navbar/navbar'
-import Welcome from '@/components/Welcome/welcome';
-
-
+import Welcome from '@/components/Welcome/welcome'
 export default function Home() {
+
   return (
     <>
-   
-    <Header></Header>
-    <Welcome></Welcome>
-    
+      <Header />
+      <Welcome />
     </>
-    
-  );
+  )
 }
