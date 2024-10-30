@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 
-const GOOGLE_MAPS_API_KEY = "AIzaSyD__c5o8I6rWbn80EQl301e1l-Pet0MlI8";
+const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
 
 const mapContainerStyle = {
