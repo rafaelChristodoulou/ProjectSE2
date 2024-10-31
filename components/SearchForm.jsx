@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input"
 import { Calendar } from "@/components/ui/calendar"
 import { cn } from "@/lib/utils"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Plane, Clock, DollarSign } from 'lucide-react';
 
 
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
@@ -35,6 +36,9 @@ export default function FlightSearchAndRouteMap() {
   const [endDate, setEndDate] = useState(null);
   const [route, setRoute] = useState([]);
   const [error, setError] = useState('');
+  const [flights, setFlights] = useState([]); 
+  const [loading, setLoading] = useState(false); 
+
 
   useEffect(() => {
     fetch('/api/airports')
@@ -58,17 +62,36 @@ export default function FlightSearchAndRouteMap() {
   const handleSelectFrom = (airport) => setSelectedFrom(airport);
   const handleSelectTo = (airport) => setSelectedTo(airport);
 
-  const calculateRoute = () => {
+  const  calculateRoute = async() => {
     setError('');
+    setLoading(true);
+
     if (!selectedFrom || !selectedTo) {
       setError('Please select both origin and destination airports.');
+      setLoading(false);
       return;
     }
+
+    try {
+      const response = await fetch(`/api/flights?from=${encodeURIComponent(selectedFrom.name)}&to=${encodeURIComponent(selectedTo.name)}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch flights');
+      }
+      const flightData = await response.json();
+      setFlights(flightData);
+
 
     setRoute([
       { lat: Number(selectedFrom.latitude), lng: Number(selectedFrom.longitude) },
       { lat: Number(selectedTo.latitude), lng: Number(selectedTo.longitude) }
     ]);
+
+  } catch (error) {
+    console.error('Error fetching flights:', error);
+    setError('Failed to fetch flight information');
+  } finally {
+    setLoading(false);
+  }
   };
 
   return (
@@ -199,6 +222,84 @@ export default function FlightSearchAndRouteMap() {
             </Button>
           </div>
           {error && <p className="text-red-500 text-center">{error}</p>}
+
+          {flights.length > 0 && (
+  <div className="mt-4">
+    <h2 className="text-2xl font-bold mb-4">Available Flights</h2>
+    <div className="space-y-4">
+      {flights.map((flight, index) => (
+        <Card key={index} className="max-w-xl p-6 hover:shadow-lg transition-shadow">
+          <div className="flex flex-col space-y-4">
+            {/* Flight route and time */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-8">
+                <div className="flex flex-col">
+                  <span className="text-sm text-gray-500">From</span>
+                  <span className="text-lg font-semibold">
+                    {flight.from_airport} ({flight.from_code})
+                  </span>
+                </div>
+                
+                <div className="flex flex-col items-center">
+                  <PlaneIcon className="w-5 h-5 text-blue-500 rotate-90" />
+                  <div className="w-24 h-px bg-gray-300 my-2"></div>
+                  <span className="text-sm text-gray-500">Direct</span>
+                </div>
+
+                <div className="flex flex-col">
+                  <span className="text-sm text-gray-500">To</span>
+                  <span className="text-lg font-semibold">
+                    {flight.to_airport} ({flight.to_code})
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex flex-col items-end">
+                <div className="flex items-center space-x-1">
+                  <Clock className="w-4 h-4 text-gray-400" />
+                  <span className="text-sm text-gray-500">{flight.duration}</span>
+                </div>
+                <span className="text-lg font-semibold">
+                  {flight.departuretime} - {flight.arrivaltime}
+                </span>
+              </div>
+            </div>
+
+            {/* Divider */}
+            <div className="border-t border-gray-200"></div>
+
+            {/* Bottom section with price and details */}
+            <div className="flex justify-between items-center">
+              <div className="flex items-center space-x-4">
+                <div>
+                  <span className="text-sm text-gray-500">{flight.airline}</span>
+                  <div className="text-xs text-gray-400">{flight.aircraft}</div>
+                </div>
+              </div>
+
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center">
+                  <DollarSign className="w-5 h-5 text-green-500" />
+                  <span className="text-2xl font-bold">{flight.price}</span>
+                </div>
+                <button className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors">
+                  Select
+                </button>
+              </div>
+            </div>
+          </div>
+        </Card>
+      ))}
+    </div>
+  </div>
+)}
+
+
+
+
+
+
+
           <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
             <GoogleMap
               mapContainerStyle={mapContainerStyle}
