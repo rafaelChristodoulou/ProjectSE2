@@ -12,6 +12,7 @@ import { Calendar } from "@/components/ui/calendar"
 import { cn } from "@/lib/utils"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Plane, Clock, DollarSign } from 'lucide-react';
+import { useRouter } from 'next/navigation'
 
 
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
@@ -29,6 +30,7 @@ const center = {
 
 export default function FlightSearchAndRouteMap() {
 
+  const router = useRouter()
   const [airports, setAirports] = useState([]);
   const [selectedFrom, setSelectedFrom] = useState(null);
   const [selectedTo, setSelectedTo] = useState(null);
@@ -93,6 +95,10 @@ export default function FlightSearchAndRouteMap() {
     setLoading(false);
   }
   };
+
+  const handleFlightSelect = (flight) => {
+    router.push(`/checkout?flight=${encodeURIComponent(JSON.stringify(flight))}`)
+  }
 
   return (
     
@@ -282,9 +288,9 @@ export default function FlightSearchAndRouteMap() {
                   <DollarSign className="w-5 h-5 text-green-500" />
                   <span className="text-2xl font-bold">{flight.price}</span>
                 </div>
-                <button className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors">
-                  Select
-                </button>
+                <Button onClick={() => handleFlightSelect(flight)}>
+                              Select
+                </Button>
               </div>
             </div>
           </div>
