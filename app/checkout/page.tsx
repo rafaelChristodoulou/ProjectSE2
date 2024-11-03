@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -31,6 +31,8 @@ interface FlightData {
 }
 
 export default function AirlineCheckout() {
+
+  
   const searchParams = useSearchParams()
   const [flightData, setFlightData] = useState<FlightData | null>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -67,6 +69,7 @@ export default function AirlineCheckout() {
   }
 
   return (
+    <Suspense fallback={<div>Loading Checkout...</div>}>
     <div className="container mx-auto p-4 max-w-4xl">
       <h1 className="text-3xl font-bold mb-8">Checkout</h1>
       <div className="grid gap-8 md:grid-cols-2">
@@ -204,5 +207,6 @@ export default function AirlineCheckout() {
         </DialogContent>
       </Dialog>
     </div>
+    </Suspense>
   )
 }
