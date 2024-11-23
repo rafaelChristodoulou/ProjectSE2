@@ -41,8 +41,23 @@ export default function FlightSearchAndRouteMap() {
   const [flights, setFlights] = useState([]); 
   const [loading, setLoading] = useState(false); 
 
+  const [searchFromTerm, setSearchFromTerm] = useState('');
+  const [searchToTerm, setSearchToTerm] = useState('');
+  const [fromOpen, setFromOpen] = useState(false);
+  const [toOpen, setToOpen] = useState(false);
 
-  useEffect(() => {
+  const filteredFromAirports = airports.filter(airport => 
+    airport.name.toLowerCase().includes(searchFromTerm.toLowerCase()) ||
+    airport.code.toLowerCase().includes(searchFromTerm.toLowerCase())
+  );
+
+  const filteredToAirports = airports.filter(airport => 
+    airport.name.toLowerCase().includes(searchToTerm.toLowerCase()) ||
+    airport.code.toLowerCase().includes(searchToTerm.toLowerCase())
+  );
+
+
+ useEffect(() => {
     fetch('/api/airports')
       .then(response => {
         if (!response.ok) {
@@ -61,8 +76,15 @@ export default function FlightSearchAndRouteMap() {
   }, []);
 
 
-  const handleSelectFrom = (airport) => setSelectedFrom(airport);
-  const handleSelectTo = (airport) => setSelectedTo(airport);
+  const handleSelectFrom = (airport) => {
+    setSelectedFrom(airport);
+    setFromOpen(false);
+  };
+
+  const handleSelectTo = (airport) => {
+    setSelectedTo(airport);
+    setToOpen(false);
+  };
 
   const  calculateRoute = async() => {
     setError('');
@@ -101,7 +123,6 @@ export default function FlightSearchAndRouteMap() {
   }
 
   return (
-    
     <div className="w-full px-4 sm:px-6 md:px-8 py-4">
       <Card className="w-full max-w-4xl mx-auto">
         <CardHeader>
@@ -113,19 +134,25 @@ export default function FlightSearchAndRouteMap() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="from">From</Label>
-                <Popover>
+                <Popover open={fromOpen} onOpenChange={setFromOpen}>
                   <PopoverTrigger asChild>
                     <Button variant="outline" className="w-full justify-start font-normal">
                       <PlaneIcon className="mr-2 h-4 w-4" />
-                      <span className="truncate">{selectedFrom ? `${selectedFrom.name} (${selectedFrom.code})` : 'Select airport'}</span>
+                      <span className="truncate">
+                        {selectedFrom ? `${selectedFrom.name} (${selectedFrom.code})` : 'Select airport'}
+                      </span>
                       <ChevronDownIcon className="ml-auto h-4 w-4 opacity-50 flex-shrink-0" />
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-[calc(100vw-2rem)] sm:w-[400px] p-0" align="start">
                     <div className="space-y-2 p-4">
-                      <Input placeholder="Search airports" />
+                      <Input 
+                        placeholder="Search airports" 
+                        value={searchFromTerm}
+                        onChange={(e) => setSearchFromTerm(e.target.value)}
+                      />
                       <div className="grid gap-2 max-h-[300px] overflow-y-auto">
-                        {airports.map((airport) => (
+                        {filteredFromAirports.map((airport) => (
                           <div
                             key={airport.id}
                             className="flex items-center gap-2 cursor-pointer p-2 hover:bg-gray-100 rounded"
@@ -143,19 +170,25 @@ export default function FlightSearchAndRouteMap() {
 
               <div className="space-y-2">
                 <Label htmlFor="to">To</Label>
-                <Popover>
+                <Popover open={toOpen} onOpenChange={setToOpen}>
                   <PopoverTrigger asChild>
                     <Button variant="outline" className="w-full justify-start font-normal">
                       <PlaneIcon className="mr-2 h-4 w-4" />
-                      <span className="truncate">{selectedTo ? `${selectedTo.name} (${selectedTo.code})` : 'Select airport'}</span>
+                      <span className="truncate">
+                        {selectedTo ? `${selectedTo.name} (${selectedTo.code})` : 'Select airport'}
+                      </span>
                       <ChevronDownIcon className="ml-auto h-4 w-4 opacity-50 flex-shrink-0" />
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-[calc(100vw-2rem)] sm:w-[400px] p-0" align="start">
                     <div className="space-y-2 p-4">
-                      <Input placeholder="Search airports" />
+                      <Input 
+                        placeholder="Search airports" 
+                        value={searchToTerm}
+                        onChange={(e) => setSearchToTerm(e.target.value)}
+                      />
                       <div className="grid gap-2 max-h-[300px] overflow-y-auto">
-                        {airports.map((airport) => (
+                        {filteredToAirports.map((airport) => (
                           <div
                             key={airport.id}
                             className="flex items-center gap-2 cursor-pointer p-2 hover:bg-gray-100 rounded"
