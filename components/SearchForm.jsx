@@ -41,8 +41,23 @@ export default function FlightSearchAndRouteMap() {
   const [flights, setFlights] = useState([]); 
   const [loading, setLoading] = useState(false); 
 
+  const [searchFromTerm, setSearchFromTerm] = useState('');
+  const [searchToTerm, setSearchToTerm] = useState('');
+  const [fromOpen, setFromOpen] = useState(false);
+  const [toOpen, setToOpen] = useState(false);
 
-  useEffect(() => {
+  const filteredFromAirports = airports.filter(airport => 
+    airport.name.toLowerCase().includes(searchFromTerm.toLowerCase()) ||
+    airport.code.toLowerCase().includes(searchFromTerm.toLowerCase())
+  );
+
+  const filteredToAirports = airports.filter(airport => 
+    airport.name.toLowerCase().includes(searchToTerm.toLowerCase()) ||
+    airport.code.toLowerCase().includes(searchToTerm.toLowerCase())
+  );
+
+
+ useEffect(() => {
     fetch('/api/airports')
       .then(response => {
         if (!response.ok) {
@@ -61,8 +76,15 @@ export default function FlightSearchAndRouteMap() {
   }, []);
 
 
-  const handleSelectFrom = (airport) => setSelectedFrom(airport);
-  const handleSelectTo = (airport) => setSelectedTo(airport);
+  const handleSelectFrom = (airport) => {
+    setSelectedFrom(airport);
+    setFromOpen(false);
+  };
+
+  const handleSelectTo = (airport) => {
+    setSelectedTo(airport);
+    setToOpen(false);
+  };
 
   const  calculateRoute = async() => {
     setError('');
@@ -101,237 +123,248 @@ export default function FlightSearchAndRouteMap() {
   }
 
   return (
-    
-    <Card className="w-full max-w-4xl mx-auto">
-      <CardHeader>
-        <CardTitle>Flight Search and Route Map</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="grid gap-6">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="from">From</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" className="w-full justify-start font-normal">
-                    <PlaneIcon className="mr-2 h-4 w-4" />
-                    <span>{selectedFrom ? `${selectedFrom.name} (${selectedFrom.code})` : 'Select airport'}</span>
-                    <ChevronDownIcon className="ml-auto h-4 w-4 opacity-50" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-[400px] p-0" align="start">
-                  <div className="space-y-2 p-4">
-                    <Input placeholder="Search airports" />
-                    <div className="grid gap-2 max-h-[300px] overflow-y-auto">
-                      {airports.map((airport) => (
-                        <div
-                          key={airport.id}
-                          className="flex items-center gap-2 cursor-pointer"
-                          onClick={() => handleSelectFrom(airport)}
-                        >
-                          <PlaneIcon className="h-5 w-5" />
-                          <span>{airport.name} ({airport.code})</span>
-                        </div>
-                      ))}
+    <div className="w-full px-4 sm:px-6 md:px-8 py-4">
+      <Card className="w-full max-w-4xl mx-auto">
+        <CardHeader>
+          <CardTitle className="text-xl sm:text-2xl">Flight Search and Route Map</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-6">
+            {/* From/To Section */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="from">From</Label>
+                <Popover open={fromOpen} onOpenChange={setFromOpen}>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="w-full justify-start font-normal">
+                      <PlaneIcon className="mr-2 h-4 w-4" />
+                      <span className="truncate">
+                        {selectedFrom ? `${selectedFrom.name} (${selectedFrom.code})` : 'Select airport'}
+                      </span>
+                      <ChevronDownIcon className="ml-auto h-4 w-4 opacity-50 flex-shrink-0" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[calc(100vw-2rem)] sm:w-[400px] p-0" align="start">
+                    <div className="space-y-2 p-4">
+                      <Input 
+                        placeholder="Search airports" 
+                        value={searchFromTerm}
+                        onChange={(e) => setSearchFromTerm(e.target.value)}
+                      />
+                      <div className="grid gap-2 max-h-[300px] overflow-y-auto">
+                        {filteredFromAirports.map((airport) => (
+                          <div
+                            key={airport.id}
+                            className="flex items-center gap-2 cursor-pointer p-2 hover:bg-gray-100 rounded"
+                            onClick={() => handleSelectFrom(airport)}
+                          >
+                            <PlaneIcon className="h-5 w-5 flex-shrink-0" />
+                            <span className="truncate">{airport.name} ({airport.code})</span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                </PopoverContent>
-              </Popover>
-            </div>
+                  </PopoverContent>
+                </Popover>
+              </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="to">To</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" className="w-full justify-start font-normal">
-                    <PlaneIcon className="mr-2 h-4 w-4" />
-                    <span>{selectedTo ? `${selectedTo.name} (${selectedTo.code})` : 'Select airport'}</span>
-                    <ChevronDownIcon className="ml-auto h-4 w-4 opacity-50" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-[400px] p-0" align="start">
-                  <div className="space-y-2 p-4">
-                    <Input placeholder="Search airports" />
-                    <div className="grid gap-2 max-h-[300px] overflow-y-auto">
-                      {airports.map((airport) => (
-                        <div
-                          key={airport.id}
-                          className="flex items-center gap-2 cursor-pointer"
-                          onClick={() => handleSelectTo(airport)}
-                        >
-                          <PlaneIcon className="h-5 w-5" />
-                          <span>{airport.name} ({airport.code})</span>
-                        </div>
-                      ))}
+              <div className="space-y-2">
+                <Label htmlFor="to">To</Label>
+                <Popover open={toOpen} onOpenChange={setToOpen}>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="w-full justify-start font-normal">
+                      <PlaneIcon className="mr-2 h-4 w-4" />
+                      <span className="truncate">
+                        {selectedTo ? `${selectedTo.name} (${selectedTo.code})` : 'Select airport'}
+                      </span>
+                      <ChevronDownIcon className="ml-auto h-4 w-4 opacity-50 flex-shrink-0" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[calc(100vw-2rem)] sm:w-[400px] p-0" align="start">
+                    <div className="space-y-2 p-4">
+                      <Input 
+                        placeholder="Search airports" 
+                        value={searchToTerm}
+                        onChange={(e) => setSearchToTerm(e.target.value)}
+                      />
+                      <div className="grid gap-2 max-h-[300px] overflow-y-auto">
+                        {filteredToAirports.map((airport) => (
+                          <div
+                            key={airport.id}
+                            className="flex items-center gap-2 cursor-pointer p-2 hover:bg-gray-100 rounded"
+                            onClick={() => handleSelectTo(airport)}
+                          >
+                            <PlaneIcon className="h-5 w-5 flex-shrink-0" />
+                            <span className="truncate">{airport.name} ({airport.code})</span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                </PopoverContent>
-              </Popover>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="dates">Starting Date</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant={"outline"}
-                    className={cn(
-                      "w-full justify-start font-normal",
-                      !date && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarDaysIcon className="mr-2 h-4 w-4" />
-                    {date ? format(date, "PPP") : <span>Pick a date</span>}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={date}
-                    onSelect={setDate}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="dates">Finish Date</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant={"outline"}
-                    className={cn(
-                      "w-full justify-start font-normal",
-                      !endDate && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarDaysIcon className="mr-2 h-4 w-4" />
-                    {endDate ? format(endDate, "PPP") : <span>Pick a date</span>}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={endDate}
-                    onSelect={setEndDate}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-          </div>
-          <div className="flex justify-center">
-            <Button onClick={calculateRoute} className="w-full justify-center">
-              Search and Show Route
-            </Button>
-          </div>
-          {error && <p className="text-red-500 text-center">{error}</p>}
-
-          {flights.length > 0 && (
-  <div className="mt-4">
-    <h2 className="text-2xl font-bold mb-4">Available Flights</h2>
-    <div className="space-y-4">
-      {flights.map((flight, index) => (
-        <Card key={index} className="max-w-xl p-6 hover:shadow-lg transition-shadow">
-          <div className="flex flex-col space-y-4">
-            {/* Flight route and time */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-8">
-                <div className="flex flex-col">
-                  <span className="text-sm text-gray-500">From</span>
-                  <span className="text-lg font-semibold">
-                    {flight.from_airport} ({flight.from_code})
-                  </span>
-                </div>
-                
-                <div className="flex flex-col items-center">
-                  <PlaneIcon className="w-5 h-5 text-blue-500 rotate-90" />
-                  <div className="w-24 h-px bg-gray-300 my-2"></div>
-                  <span className="text-sm text-gray-500">Direct</span>
-                </div>
-
-                <div className="flex flex-col">
-                  <span className="text-sm text-gray-500">To</span>
-                  <span className="text-lg font-semibold">
-                    {flight.to_airport} ({flight.to_code})
-                  </span>
-                </div>
-              </div>
-
-              <div className="flex flex-col items-end">
-                <div className="flex items-center space-x-1">
-                  <Clock className="w-4 h-4 text-gray-400" />
-                  <span className="text-sm text-gray-500">{flight.duration}</span>
-                </div>
-                <span className="text-lg font-semibold">
-                  {flight.departuretime} - {flight.arrivaltime}
-                </span>
+                  </PopoverContent>
+                </Popover>
               </div>
             </div>
 
-            {/* Divider */}
-            <div className="border-t border-gray-200"></div>
-
-            {/* Bottom section with price and details */}
-            <div className="flex justify-between items-center">
-              <div className="flex items-center space-x-4">
-                <div>
-                  <span className="text-sm text-gray-500">{flight.airline}</span>
-                  <div className="text-xs text-gray-400">{flight.aircraft}</div>
-                </div>
+            {/* Date Selection Section */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="dates">Starting Date</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant={"outline"}
+                      className={cn(
+                        "w-full justify-start font-normal",
+                        !date && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarDaysIcon className="mr-2 h-4 w-4" />
+                      {date ? format(date, "PPP") : <span>Pick a date</span>}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={date}
+                      onSelect={setDate}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
               </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="dates">Finish Date</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant={"outline"}
+                      className={cn(
+                        "w-full justify-start font-normal",
+                        !endDate && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarDaysIcon className="mr-2 h-4 w-4" />
+                      {endDate ? format(endDate, "PPP") : <span>Pick a date</span>}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={endDate}
+                      onSelect={setEndDate}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+            </div>
 
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center">
-                  <DollarSign className="w-5 h-5 text-green-500" />
-                  <span className="text-2xl font-bold">{flight.price}</span>
-                </div>
-                <Button onClick={() => handleFlightSelect(flight)}>
+            <div className="flex justify-center">
+              <Button onClick={calculateRoute} className="w-full justify-center">
+                Search and Show Route
+              </Button>
+            </div>
+
+            {error && <p className="text-red-500 text-center">{error}</p>}
+
+            {/* Flight Results Section */}
+            {flights.length > 0 && (
+              <div className="mt-4">
+                <h2 className="text-2xl font-bold mb-4">Available Flights</h2>
+                <div className="space-y-4">
+                  {flights.map((flight, index) => (
+                    <Card key={index} className="p-4 sm:p-6 hover:shadow-lg transition-shadow">
+                      <div className="flex flex-col space-y-4">
+                        {/* Flight route and time */}
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                            <div className="flex flex-col">
+                              <span className="text-sm text-gray-500">From</span>
+                              <span className="text-base sm:text-lg font-semibold">
+                                {flight.from_airport} ({flight.from_code})
+                              </span>
+                            </div>
+                            
+                            <div className="hidden sm:flex flex-col items-center">
+                              <PlaneIcon className="w-5 h-5 text-blue-500 rotate-90" />
+                              <div className="w-24 h-px bg-gray-300 my-2"></div>
+                              <span className="text-sm text-gray-500">Direct</span>
+                            </div>
+
+                            <div className="flex flex-col">
+                              <span className="text-sm text-gray-500">To</span>
+                              <span className="text-base sm:text-lg font-semibold">
+                                {flight.to_airport} ({flight.to_code})
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="flex flex-col items-start sm:items-end">
+                            <div className="flex items-center space-x-1">
+                              <Clock className="w-4 h-4 text-gray-400" />
+                              <span className="text-sm text-gray-500">{flight.duration}</span>
+                            </div>
+                            <span className="text-base sm:text-lg font-semibold">
+                              {flight.departuretime} - {flight.arrivaltime}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="border-t border-gray-200"></div>
+
+                        {/* Bottom section */}
+                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                          <div>
+                            <span className="text-sm text-gray-500">{flight.airline}</span>
+                            <div className="text-xs text-gray-400">{flight.aircraft}</div>
+                          </div>
+
+                          <div className="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-4">
+                            <div className="flex items-center">
+                              <DollarSign className="w-5 h-5 text-green-500" />
+                              <span className="text-xl sm:text-2xl font-bold">{flight.price}</span>
+                            </div>
+                            <Button onClick={() => handleFlightSelect(flight)}>
                               Select
-                </Button>
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
+
+            {/* Map Section */}
+            <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
+              <GoogleMap
+                mapContainerStyle={mapContainerStyle}
+                center={center}
+                zoom={2}
+              >
+                {route.length > 0 && (
+                  <>
+                    <Marker position={route[0]} />
+                    <Marker position={route[route.length - 1]} />
+                    <Polyline
+                      path={route}
+                      options={{
+                        strokeColor: "#FF0000",
+                        strokeOpacity: 1,
+                        strokeWeight: 2,
+                        geodesic: true,
+                      }}
+                    />
+                  </>
+                )}
+              </GoogleMap>
+            </LoadScript>
           </div>
-        </Card>
-      ))}
+        </CardContent>
+      </Card>
     </div>
-  </div>
-)}
-
-
-
-
-
-
-
-          <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
-            <GoogleMap
-              mapContainerStyle={mapContainerStyle}
-              center={center}
-              zoom={2}
-            >
-              {route.length > 0 && (
-                <>
-                  <Marker position={route[0]} />
-                  <Marker position={route[route.length - 1]} />
-                  <Polyline
-                    path={route}
-                    options={{
-                      strokeColor: "#FF0000",
-                      strokeOpacity: 1,
-                      strokeWeight: 2,
-                      geodesic: true,
-                    }}
-                  />
-                </>
-              )}
-            </GoogleMap>
-          </LoadScript>
-        </div>
-      </CardContent>
-    </Card>
   )
 }
 

@@ -1,5 +1,5 @@
 'use client'
-
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { login } from '@/app/actions/auth'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -11,13 +11,15 @@ export function LoginForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState('')
+  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     const result = await login(email, password)
     if (result.success) {
-      setMessage('Login successful!')
-      // Here you would typically set the user in your app's state or redirect
+      localStorage.setItem('isLoggedIn', 'true');
+      
+      window.location.href = '/';
     } else {
       setMessage(result.message || 'An error occurred')
     }
