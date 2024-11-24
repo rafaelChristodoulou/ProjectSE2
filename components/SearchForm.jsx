@@ -12,11 +12,9 @@ import { Calendar } from "@/components/ui/calendar"
 import { cn } from "@/lib/utils"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Plane, Clock, DollarSign } from 'lucide-react';
-import { useRouter } from 'next/navigation'
-
+import { useRouter, useSearchParams } from 'next/navigation'
 
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-
 
 const mapContainerStyle = {
   width: '100%',
@@ -30,34 +28,36 @@ const center = {
 
 export default function FlightSearchAndRouteMap() {
 
-  const router = useRouter()
+  const router = useRouter();
   const [airports, setAirports] = useState([]);
   const [selectedFrom, setSelectedFrom] = useState(null);
   const [selectedTo, setSelectedTo] = useState(null);
   const [date, setDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
+  const [endDate, setEndDate] = useState(null); 
   const [route, setRoute] = useState([]);
   const [error, setError] = useState('');
-  const [flights, setFlights] = useState([]); 
-  const [loading, setLoading] = useState(false); 
+  const [flights, setFlights] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const [searchFromTerm, setSearchFromTerm] = useState('');
   const [searchToTerm, setSearchToTerm] = useState('');
   const [fromOpen, setFromOpen] = useState(false);
   const [toOpen, setToOpen] = useState(false);
 
-  const filteredFromAirports = airports.filter(airport => 
-    airport.name.toLowerCase().includes(searchFromTerm.toLowerCase()) ||
-    airport.code.toLowerCase().includes(searchFromTerm.toLowerCase())
-  );
+  // Load saved user choices from local storage on mount
+  useEffect(() => {
+    const savedChoices = localStorage.getItem('userChoices');
+    if (savedChoices) {
+      const { selectedFrom, selectedTo, date, endDate } = JSON.parse(savedChoices);
+      setSelectedFrom(selectedFrom);
+      setSelectedTo(selectedTo);
+      setDate(date);
+      setEndDate(endDate);
+    }
+  }, []);
 
-  const filteredToAirports = airports.filter(airport => 
-    airport.name.toLowerCase().includes(searchToTerm.toLowerCase()) ||
-    airport.code.toLowerCase().includes(searchToTerm.toLowerCase())
-  );
-
-
- useEffect(() => {
+  // Fetch airports from API
+  useEffect(() => {
     fetch('/api/airports')
       .then(response => {
         if (!response.ok) {
@@ -75,7 +75,6 @@ export default function FlightSearchAndRouteMap() {
       });
   }, []);
 
-
   const handleSelectFrom = (airport) => {
     setSelectedFrom(airport);
     setFromOpen(false);
@@ -86,7 +85,7 @@ export default function FlightSearchAndRouteMap() {
     setToOpen(false);
   };
 
-  const  calculateRoute = async() => {
+  const calculateRoute = async () => {
     setError('');
     setLoading(true);
 
@@ -104,24 +103,42 @@ export default function FlightSearchAndRouteMap() {
       const flightData = await response.json();
       setFlights(flightData);
 
+      setRoute([
+        { lat: Number(selectedFrom.latitude), lng: Number(selectedFrom.longitude) },
+        { lat: Number(selectedTo.latitude), lng: Number(selectedTo.longitude) }
+      ]);
 
-    setRoute([
-      { lat: Number(selectedFrom.latitude), lng: Number(selectedFrom.longitude) },
-      { lat: Number(selectedTo.latitude), lng: Number(selectedTo.longitude) }
-    ]);
-
-  } catch (error) {
-    console.error('Error fetching flights:', error);
-    setError('Failed to fetch flight information');
-  } finally {
-    setLoading(false);
-  }
+    } catch (error) {
+      console.error('Error fetching flights:', error);
+      setError('Failed to fetch flight information');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleFlightSelect = (flight) => {
-    router.push(`/checkout?flight=${encodeURIComponent(JSON.stringify(flight))}`)
-  }
+    // Save user choices to local storage
+    const userChoices = {
+      selectedFrom,
+      selectedTo,
+      date,
+      endDate, // Save endDate
+    };
+    localStorage.setItem('userChoices', JSON.stringify(userChoices));
 
+    // Navigate to checkout page
+    router.push(`/checkout?flight=${encodeURIComponent(JSON.stringify(flight))}`);
+  };
+
+  const filteredFromAirports = airports.filter(airport =>
+    airport.name.toLowerCase().includes(searchFromTerm.toLowerCase()) ||
+    airport.code.toLowerCase().includes(searchFromTerm.toLowerCase())
+  );
+
+  const filteredToAirports = airports.filter(airport =>
+    airport.name.toLowerCase().includes(searchToTerm.toLowerCase()) ||
+    airport.code.toLowerCase().includes(searchToTerm.toLowerCase())
+  );
   return (
     <div className="w-full px-4 sm:px-6 md:px-8 py-4">
       <Card className="w-full max-w-4xl mx-auto">

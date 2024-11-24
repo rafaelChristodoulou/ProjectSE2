@@ -65,12 +65,6 @@ const Navigation = () => {
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-48">
-            <DropdownMenuItem>
-              <Link href="/profile" className="w-full">Profile</Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Link href="/settings" className="w-full">Settings</Link>
-            </DropdownMenuItem>
             <DropdownMenuItem onClick={handleLogout}>
               Logout
             </DropdownMenuItem>

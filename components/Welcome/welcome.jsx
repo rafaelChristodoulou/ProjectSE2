@@ -43,7 +43,7 @@ return(
           </div>
         </section>
 
-        <SearchForm></SearchForm>
+        <SearchForm data-testid="search-form"></SearchForm>
       <section>
         <h1 className="lg:leading-tighter text-3xl flex justify-center pt-20 font-bold tracking-tighter sm:text-4xl md:text-5xl xl:text-[3.4rem] 2xl:text-[3.75rem]">
                     Top Destinations
