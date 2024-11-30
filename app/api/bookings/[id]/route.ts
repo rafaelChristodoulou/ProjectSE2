@@ -3,9 +3,9 @@ import { sql } from '@vercel/postgres'
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
-  const id = params.id
+  const { id } = context.params
 
   try {
     await sql`DELETE FROM bookings WHERE id = ${id}`
