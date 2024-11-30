@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect,Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import UserBookingsPage from '@/components/UserBookings';
 import Navigation from '@/components/Navbar/navbar';
@@ -22,7 +22,9 @@ export default function BookingsPage() {
   return (
     <div className="min-h-screen bg-gray-50 pt-20">
       <Navigation />
-      <UserBookingsPage />
+      <Suspense fallback={<div>Loading your bookings...</div>}>
+        <UserBookingsPage />
+      </Suspense>
     </div>
   );
 }

@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
+
 interface Booking {
   id: string
   flight_number: string
@@ -21,6 +22,7 @@ export default function UserBookingsPage() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
+    
     if (userId) {
       fetchBookings()
     }
