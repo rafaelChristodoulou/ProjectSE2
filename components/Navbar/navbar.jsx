@@ -51,6 +51,8 @@ const Navigation = () => {
     localStorage.removeItem('isLoggedIn');
     setIsLoggedIn(false);
     router.push('/');
+    localStorage.setItem('userId',"");
+    
   };
 
   const AuthSection = () => {
@@ -65,6 +67,9 @@ const Navigation = () => {
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem onClick={() => router.push('/bookings')}>
+                My Bookings
+              </DropdownMenuItem>
             <DropdownMenuItem onClick={handleLogout}>
               Logout
             </DropdownMenuItem>

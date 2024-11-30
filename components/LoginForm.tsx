@@ -18,7 +18,7 @@ export function LoginForm() {
     const result = await login(email, password)
     if (result.success) {
       localStorage.setItem('isLoggedIn', 'true');
-      
+      localStorage.setItem('userId',result.user?.id);
       window.location.href = '/';
     } else {
       setMessage(result.message || 'An error occurred')
