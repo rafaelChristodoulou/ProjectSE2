@@ -37,7 +37,9 @@ function CheckoutContent() {
   const [flightData, setFlightData] = useState<FlightData | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [showConfirmation, setShowConfirmation] = useState(false)
+  const userId = localStorage.getItem('userId');
 
+  
   useEffect(() => {
     const flightParam = searchParams.get('flight')
     if (flightParam) {
@@ -50,14 +52,51 @@ function CheckoutContent() {
     }
   }, [searchParams])
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+ // new
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault()
+  if (!userId) {
+    alert('You must be logged in to make a booking')
+    return
+  }
+  setIsLoading(true)
+  try {
     // Simulate payment processing
-    setTimeout(() => {
-      setIsLoading(false)
-      setShowConfirmation(true)
-    }, 2000)
+    await new Promise(resolve => setTimeout(resolve, 2000))
+    
+    // Save the booking
+    if (flightData) {
+      await saveBooking(userId, flightData)
+    }
+    
+    setIsLoading(false)
+    setShowConfirmation(true)
+  } catch (error) {
+    console.error('Error processing payment or saving booking:', error)
+    setIsLoading(false)
+    alert('An error occurred while processing your booking. Please try again.')
+  }
+}
+
+  //NEW
+  const saveBooking = async (userId: string, flightData: FlightData) => {
+    const response = await fetch('/api/bookings', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId,
+        fromAirport: flightData.from_airport,
+        toAirport: flightData.to_airport,
+        departureTime: flightData.departuretime,
+        price: flightData.price,
+      }),
+    })
+
+    if (!response.ok) {
+      throw new Error('Failed to save booking')
+    }
   }
 
   if (!flightData) {

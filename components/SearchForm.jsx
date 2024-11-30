@@ -139,6 +139,8 @@ export default function FlightSearchAndRouteMap() {
     airport.name.toLowerCase().includes(searchToTerm.toLowerCase()) ||
     airport.code.toLowerCase().includes(searchToTerm.toLowerCase())
   );
+
+
   return (
     <div className="w-full px-4 sm:px-6 md:px-8 py-4">
       <Card className="w-full max-w-4xl mx-auto">
